@@ -6,3 +6,7 @@ Thumbs.db
 # Logs & Environment Variables
 *.log
 .env
+
+# Local SQLite databases
+*.db
+*.sqlite
