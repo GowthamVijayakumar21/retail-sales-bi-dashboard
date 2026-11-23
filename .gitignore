@@ -1,0 +1,8 @@
+﻿# Windows & Office Temporary Files
+.DS_Store
+Thumbs.db
+~$*
+
+# Logs & Environment Variables
+*.log
+.env
