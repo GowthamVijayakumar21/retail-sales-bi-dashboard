@@ -24,10 +24,19 @@ SELECT COUNT(*) AS invalid_ship_dates
 FROM raw_superstore
 WHERE ship_date < order_date;
 
--- 4. Create a clean, enriched analytical view for downstream BI & reporting
+-- 4. Create a clean, deduplicated, enriched analytical view
 DROP VIEW IF EXISTS vw_clean_sales;
 
 CREATE VIEW vw_clean_sales AS
+WITH deduplicated AS (
+    SELECT
+        *,
+        ROW_NUMBER() OVER (
+            PARTITION BY order_id, product_id, sales, quantity
+            ORDER BY row_id ASC
+        ) AS rn
+    FROM raw_superstore
+)
 SELECT
     row_id,
     order_id,
@@ -57,4 +66,5 @@ SELECT
         WHEN sales > 0 THEN ROUND((profit / sales) * 100.0, 2)
         ELSE 0 
     END AS profit_margin_pct
-FROM raw_superstore;
+FROM deduplicated
+WHERE rn = 1;
